@@ -1,0 +1,35 @@
+require 'rake'
+
+INPUT_DIR  = 'wiki'
+OUTPUT_DIR = 'source/documentation'
+SEPARATOR  = ';-'
+
+WIKI_FILES   = FileList["#{INPUT_DIR}/*"]
+OUTPUT_FILES = WIKI_FILES.map {|n| File.join *n.gsub(INPUT_DIR, OUTPUT_DIR).gsub('.md','.html.md.erb').downcase.split(SEPARATOR) }
+
+task default: :build
+
+task build: OUTPUT_FILES do
+  sh 'middleman', 'build', '--verbose'
+end
+
+OUTPUT_FILES.zip(WIKI_FILES).each do |output, input|
+  directory File.dirname output
+  file output => [input, File.dirname(output)] do
+    title = output.pathmap('%f').split('.').first.gsub('-',' ').capitalize
+    File.open(output, 'w') do |o|
+      rake_output_message "echo ... > #{output}"
+      contents = File.read input
+      o.puts '---'
+      o.puts "title: \"#{title}\""
+      o.puts '---'
+      o.puts "# #{title}" unless contents =~ /^#\s\S+/
+      o.puts contents
+    end
+  end
+end
+
+task :clean do
+  rm_rf OUTPUT_DIR
+  rm_rf 'build'
+end
