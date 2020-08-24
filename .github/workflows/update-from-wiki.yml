@@ -15,7 +15,9 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Update submodule
-        run: git submodule foreach git pull
+        run: |
+          git submodule foreach git fetch --all
+          git submodule foreach git reset --hard origin/master
 
       - name: Commit updated submodule
         uses: stefanzweifel/git-auto-commit-action@v4
