@@ -5,5 +5,6 @@ GovukTechDocs.configure(self)
 ignore 'documentation/home.html.md.erb'
 
 configure :build do
-  set :http_prefix, '/automated-wiki-test/'
+  prefix = (ENV['GITHUB_REPOSITORY'] || '').partition('/')[-2..-1].join
+  set :http_prefix, "#{prefix}/"
 end
