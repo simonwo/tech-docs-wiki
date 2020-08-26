@@ -10,6 +10,7 @@
 # Ignore the build directory
 /build
 /source/documentation
+/source/*.html.md.erb
 
 # Ignore cache
 /.sass-cache
