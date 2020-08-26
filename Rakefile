@@ -1,4 +1,8 @@
 require 'rake'
+require 'yaml'
+
+CONFIG = YAML.load_file 'config/tech-docs.yml'
+GITHUB_REPO = CONFIG['github_repo']
 
 INPUT_DIR  = 'wiki'
 OUTPUT_DIR = 'source/documentation'
@@ -22,6 +26,7 @@ OUTPUT_FILES.zip(WIKI_FILES).each do |output, input|
       contents = File.read input
       o.puts '---'
       o.puts "title: \"#{title}\""
+      o.puts "source_url: \"#{File.join 'https://github.com', GITHUB_REPO, 'wiki', input.pathmap('%n')}\""
       o.puts '---'
       o.puts "# #{title}" unless contents =~ /^#\s\S+/
       o.puts contents
