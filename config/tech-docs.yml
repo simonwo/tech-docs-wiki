@@ -1,9 +1,9 @@
 # Host to use for canonical URL generation (without trailing slash)
-host: https://simonwo.github.io/automated-wiki-test
+host: https://simonwo.github.io/tech-docs-wiki
 
 # Header-related options
 show_govuk_logo: false
-service_name: Automated Wiki Test
+service_name: Tech Docs Wiki
 service_link: https://www.larry-the-cat.service.gov.uk
 phase: Beta
 
@@ -35,4 +35,4 @@ max_toc_heading_level: 6
 prevent_indexing: false
 
 show_contribution_banner: true
-github_repo: simonwo/automated-wiki-test
+github_repo: simonwo/tech-docs-wiki
