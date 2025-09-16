@@ -33,33 +33,41 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v2
         with:
-          ref: master
+          ref: ${{ github.ref }}
           submodules: true
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/configure-pages@v5
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 2.6
-
-      - name: Restore gems from cache
-        uses: actions/cache@v2
-        env:
-          cache-name: ruby-gems-cache
-        with:
-          path: ./.gems
-          key: ${{ runner.os }}-${{ env.cache-name }}-${{ hashFiles('**/Gemfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-${{ env.cache-name }}-
-
-      - name: Install gems
-        run: bundle install --path=./.gems --jobs=9
+          ruby-version: '3.2'
+          bundler-cache: true
 
       - name: Build site
         run: bundle exec rake
 
-      - name: Deploy to Github Pages
-        uses: peaceiris/actions-gh-pages@v3
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3.0.1
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: build
+          path: ./build
+
+  deploy:
+    name: Deploy to Pages
+    needs: build-static-pages
+    if: ${{ github.ref == 'refs/heads/main' }}
+
+    permissions:
+      pages: write      # to deploy to Pages
+      id-token: write   # to verify the deployment originates from an appropriate source
+
+    environment:
+      name: Github Pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

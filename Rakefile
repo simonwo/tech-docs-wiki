@@ -12,26 +12,11 @@ WIKI_FILES   = FileList["#{INPUT_DIR}/*"]
 OUTPUT_FILES = WIKI_FILES.map {|n| File.join *n.gsub(INPUT_DIR, OUTPUT_DIR).gsub('.md','.html.md.erb').downcase.split(SEPARATOR) }
 INDEX_FILE   = File.join OUTPUT_DIR, '../', 'index.html.md.erb'
 
-def patch relative_path, patch_filename
-  full_path = Gem.find_files(relative_path).first
-  unless full_path.nil?
-    sh 'patch', full_path, '-i', patch_filename
-    full_path
-  end
-end
-
 task default: :build
 
 task pages: OUTPUT_FILES
 
-task :patches do
-  full_path = patch("assets/javascripts/_modules/search.js", "gem-patches/search.js.patch")
-  unless full_path.nil?
-    mv full_path, full_path + ".erb"
-  end
-end
-
-task build: [:pages, :patches] do
+task build: [:pages] do
   sh 'middleman', 'build', '--verbose'
 end
 
